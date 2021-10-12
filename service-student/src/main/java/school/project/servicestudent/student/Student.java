@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table( name = "estudiante",
@@ -33,7 +34,7 @@ import static javax.persistence.FetchType.*;
 public class Student implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
+    @GeneratedValue( strategy = AUTO )
     @Column( nullable = false,
              updatable = false )
     private Long id;
