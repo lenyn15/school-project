@@ -14,6 +14,7 @@ import java.util.Date;
 
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
+import static javax.persistence.TemporalType.*;
 
 @Entity
 @Table( name = "estudiante",
@@ -66,6 +67,7 @@ public class Student implements Serializable {
     private String dni;
 
     @Past( message = "La fecha ingresada, debe ser menor a la actual" )
+    @Temporal( DATE )
     @Column( name = "fecha_nacimiento",
              nullable = false )
     private Date birth_date;
