@@ -10,6 +10,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+import static javax.persistence.GenerationType.*;
+
 @Entity
 @Table( name = "apoderado",
         indexes = {
@@ -31,7 +33,7 @@ import java.io.Serializable;
 public class Tutor implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO )
+    @GeneratedValue( strategy = AUTO )
     @Column( nullable = false,
              updatable = false )
     private int id;
