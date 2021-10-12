@@ -78,7 +78,7 @@ public class Student implements Serializable {
 
     @Column( name = "estado",
              length = 20 )
-    private String state;
+    private String status;
 
     @ToString.Exclude
     @ManyToOne( fetch = LAZY )
