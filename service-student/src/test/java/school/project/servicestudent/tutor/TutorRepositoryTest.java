@@ -22,8 +22,14 @@ class TutorRepositoryTest {
     }
 
     @Test
-    void itShouldFindByDni() {
-        Optional<Tutor> tutorDB = underTest.existDni( "74224461" );
-        assertThat( tutorDB.isPresent() ).isTrue();
+    void itShouldCheckIfExistDni() {
+        Optional<Tutor> dni = underTest.existDni( "74224461" );
+        assertThat( dni.isPresent() ).isTrue();
+    }
+
+    @Test
+    void itShouldCheckIfExistEmail() {
+        Optional<Tutor> email = underTest.existEmail( "liz@gmail.com" );
+        assertThat( email.isPresent() ).isTrue();
     }
 }
