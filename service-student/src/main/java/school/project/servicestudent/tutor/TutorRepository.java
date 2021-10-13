@@ -17,4 +17,8 @@ public interface TutorRepository extends JpaRepository<Tutor, Integer> {
 
     @Query( "select t from Tutor t where t.dni = :dni" )
     Optional<Tutor> existDni( @Param( "dni" ) String dni );
+
+    @Query( "select t from Tutor t where t.email = ?1" )
+    Optional<Tutor> existEmail( String email );
+
 }
