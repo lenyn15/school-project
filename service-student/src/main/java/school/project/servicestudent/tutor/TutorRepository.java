@@ -15,5 +15,6 @@ public interface TutorRepository extends JpaRepository<Tutor, Integer> {
             nativeQuery = true )
     List<Tutor> filterTutor( @Param( "filter" ) String filter );
 
-    Optional<Tutor> findByDni( String dni );
+    @Query( "select t from Tutor t where t.dni = :dni" )
+    Optional<Tutor> existDni( @Param( "dni" ) String dni );
 }
