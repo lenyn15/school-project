@@ -23,7 +23,7 @@ class TutorRepositoryTest {
 
     @Test
     void itShouldFindByDni() {
-        Optional<Tutor> tutorDB = underTest.findByDni( "74224461" );
+        Optional<Tutor> tutorDB = underTest.existDni( "74224461" );
         assertThat( tutorDB.isPresent() ).isTrue();
     }
 }
