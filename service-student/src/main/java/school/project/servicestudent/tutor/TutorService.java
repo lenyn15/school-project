@@ -5,7 +5,7 @@ import java.util.List;
 public interface TutorService {
     List<Tutor> listAll();
 
-    List<Tutor> filterTutors( String filter );
+    List<Tutor> searchTutors( String filter );
 
     Tutor searchByDni( String dni );
 
