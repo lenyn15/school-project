@@ -14,11 +14,19 @@ public interface TutorRepository extends JpaRepository<Tutor, Integer> {
             nativeQuery = true )
     List<Tutor> filterTutor( @Param( "filter" ) String filter );
 
-    @Query( "select t from Tutor t where t.dni = :dni" )
+    @Query( "select "
+            + "case when count(t) > 0 then "
+            + "true else "
+            + "false end "
+            + "from Tutor t where t.dni = :dni" )
     Boolean existDni( @Param( "dni" ) String dni );
 
-    @Query( "select t from Tutor t where t.email = ?1" )
-    Boolean existEmail( String email );
+    @Query( "select "
+            + "case when count(t) > 0 then "
+            + "true else "
+            + "false end "
+            + "from Tutor t where t.email = :email" )
+    Boolean existEmail( @Param( "email" ) String email );
 
     Tutor findByDni( String dni );
 }
