@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface TutorRepository extends JpaRepository<Tutor, Integer> {
@@ -16,10 +15,10 @@ public interface TutorRepository extends JpaRepository<Tutor, Integer> {
     List<Tutor> filterTutor( @Param( "filter" ) String filter );
 
     @Query( "select t from Tutor t where t.dni = :dni" )
-    Optional<Tutor> existDni( @Param( "dni" ) String dni );
+    Boolean existDni( @Param( "dni" ) String dni );
 
     @Query( "select t from Tutor t where t.email = ?1" )
-    Optional<Tutor> existEmail( String email );
+    Boolean existEmail( String email );
 
     Tutor findByDni( String dni );
 }
