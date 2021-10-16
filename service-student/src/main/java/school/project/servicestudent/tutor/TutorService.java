@@ -3,18 +3,18 @@ package school.project.servicestudent.tutor;
 import java.util.List;
 
 public interface TutorService {
-    List<Tutor> listAll();
+    List<Tutor> showAll();
 
     List<Tutor> searchTutors( String filter );
 
     Tutor searchByDni( String dni );
 
-    Tutor getTutor( int id );
+    Tutor getOne( int id );
 
-    Tutor addTutor( Tutor tutor );
+    Tutor add( Tutor tutor );
 
-    Tutor updateTutor( int id,
+    Tutor update( int id,
                        Tutor tutor );
 
-    void deleteTutor( int id );
+    void destroy( int id );
 }
