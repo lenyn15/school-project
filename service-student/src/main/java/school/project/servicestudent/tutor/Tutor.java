@@ -56,7 +56,7 @@ public class Tutor implements Serializable {
              length = 10 )
     private String gender;
 
-    @Dni( message = "El dni ingresado no es válido" )
+    @Dni
     @NotEmpty( message = "Ingrese el dni del apoderado" )
     @Size( min = 8,
            max = 8,
@@ -65,7 +65,7 @@ public class Tutor implements Serializable {
              length = 8 )
     private String dni;
 
-    @Phone( message = "El telefono ingresado no es válido" )
+    @Phone
     @NotEmpty( message = "Ingrese el telefono del apoderado" )
     @Size( min = 9,
            max = 9,
