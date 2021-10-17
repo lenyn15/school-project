@@ -57,18 +57,13 @@ public class Tutor implements Serializable {
     private String gender;
 
     @Dni
-    @Size( min = 8,
-           max = 8,
-           message = "El tamaño del DNI es 8" )
+    @NotEmpty( message = "Ingrese el dni del apoderado" )
     @Column( nullable = false,
              length = 8 )
     private String dni;
 
     @Phone
     @NotEmpty( message = "Ingrese el telefono del apoderado" )
-    @Size( min = 9,
-           max = 9,
-           message = "El tamaño del telefono es 9" )
     @Column( name = "telefono",
              nullable = false,
              length = 9 )
