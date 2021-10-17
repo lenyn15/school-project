@@ -41,7 +41,7 @@ public class Tutor implements Serializable {
     @NotEmpty( message = "Ingrese el nombre del apoderado" )
     @Column( name = "nombres",
              nullable = false,
-             length = 45 )
+             length = 50 )
     private String name;
 
     @NotEmpty( message = "Ingrese los apelllidos del apoderado" )
