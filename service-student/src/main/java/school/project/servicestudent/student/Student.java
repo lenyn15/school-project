@@ -3,7 +3,6 @@ package school.project.servicestudent.student;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import school.project.servicestudent.tutor.Tutor;
-import school.project.servicestudent.validation.Dni;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -58,7 +57,7 @@ public class Student implements Serializable {
              length = 20 )
     private String gender;
 
-    @Dni
+    @NotEmpty( message = "Ingrese el dni del estudiante" )
     @Size( min = 8,
            max = 8,
            message = "El tamaño del dni es 8" )
