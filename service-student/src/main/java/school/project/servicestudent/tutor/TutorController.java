@@ -2,13 +2,16 @@ package school.project.servicestudent.tutor;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import school.project.servicestudent.exception.ApiRequestException;
 
 import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.GONE;
+import static school.project.servicestudent.validation.Message.formatMessage;
 
 @RestController
 @AllArgsConstructor
@@ -40,7 +43,12 @@ public class TutorController {
     }
 
     @PostMapping
-    public ResponseEntity<Tutor> addOne( @Valid @RequestBody Tutor tutor ) {
+    public ResponseEntity<Tutor> addOne( @Valid @RequestBody Tutor tutor,
+                                         BindingResult result ) {
+        if ( result.hasErrors() ) {
+            throw new ApiRequestException( formatMessage( result ) );
+        }
+
         return ResponseEntity
                 .status( CREATED )
                 .body( tutorService.add( tutor ) );
@@ -48,7 +56,11 @@ public class TutorController {
 
     @PutMapping( path = "/{id}" )
     public ResponseEntity<Tutor> updateOne( @PathVariable( "id" ) int idTutor,
-                                            @Valid @RequestBody Tutor tutor ) {
+                                            @Valid @RequestBody Tutor tutor,
+                                            BindingResult result ) {
+        if ( result.hasErrors() ) {
+            throw new ApiRequestException( formatMessage( result ) );
+        }
         return ResponseEntity.ok( tutorService.update( idTutor, tutor ) );
     }
 
