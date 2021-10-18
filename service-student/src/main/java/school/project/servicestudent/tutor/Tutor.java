@@ -1,8 +1,6 @@
 package school.project.servicestudent.tutor;
 
 import lombok.*;
-import school.project.servicestudent.validation.Dni;
-import school.project.servicestudent.validation.Phone;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -56,7 +54,6 @@ public class Tutor implements Serializable {
              length = 10 )
     private String gender;
 
-    @Dni
     @NotEmpty( message = "Ingrese el dni del apoderado" )
     @Size( min = 8,
            max = 8,
@@ -65,7 +62,6 @@ public class Tutor implements Serializable {
              length = 8 )
     private String dni;
 
-    @Phone
     @NotEmpty( message = "Ingrese el telefono del apoderado" )
     @Size( min = 9,
            max = 9,
@@ -75,7 +71,7 @@ public class Tutor implements Serializable {
              length = 9 )
     private String phone;
 
-    @Email( message = "El email ingresado, es invalido" )
+    @Email( message = "El email ingresado no es invalido" )
     @NotEmpty( message = "Ingrese el email del apoderado" )
     @Column( nullable = false,
              length = 65 )
