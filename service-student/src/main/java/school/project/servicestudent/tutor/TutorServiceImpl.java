@@ -40,9 +40,8 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor getOne( int id ) {
-        return tutorRepository
-                .findById( id )
-                .orElse( null );
+        return tutorRepository.findById( id )
+                              .orElse( null );
     }
 
     @Override
