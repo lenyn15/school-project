@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
@@ -66,10 +66,9 @@ public class Student implements Serializable {
     private String dni;
 
     @Past( message = "La fecha ingresada, debe ser menor a la actual" )
-    @Temporal( DATE )
     @Column( name = "fecha_nacimiento",
              nullable = false )
-    private Date birth_date;
+    private LocalDate birth_date;
 
     @NotEmpty( message = "Ingrese la direccion del estudiante" )
     @Column( name = "direccion",
