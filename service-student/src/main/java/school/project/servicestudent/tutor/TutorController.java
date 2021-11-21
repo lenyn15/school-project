@@ -92,7 +92,7 @@ public class TutorController {
         }
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.update( idTutor, tutor ) ) )
-                            .message( "Tutor actualizado correctamente" )
+                            .message( "Datos actualizados correctamente" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -102,9 +102,7 @@ public class TutorController {
     public ResponseEntity<Response> deleteOne( @PathVariable( "id" ) int idTutor ) {
         tutorService.destroy( idTutor );
         return ok( builder().dateTime( now() )
-                            .message( "Tutor con id "
-                                              + idTutor
-                                              + ", eliminado" )
+                            .message( "Tutor con id " + idTutor + ", eliminado" )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
