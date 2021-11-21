@@ -11,9 +11,8 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import static javax.persistence.FetchType.*;
-import static javax.persistence.GenerationType.*;
-import static javax.persistence.TemporalType.*;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.AUTO;
 
 @Entity
 @Table( name = "estudiante",
