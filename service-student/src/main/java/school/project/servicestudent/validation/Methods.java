@@ -76,6 +76,7 @@ public class Methods {
             tutor.setEmail( tutorDTO.getEmail() );
         }
         tutor.setOccupation( tutorDTO.getOccupation() );
+        tutor.setStatus( true );
         tutorRepository.save( tutor );
         return tutor;
     }
@@ -84,6 +85,7 @@ public class Methods {
         return list.stream()
                    .map( tutor -> {
                        TutorDTO tutorDTO = new TutorDTO();
+                       tutorDTO.setId( tutor.getId() );
                        tutorDTO.setComplete_name( String.format( "%s %s", tutor.getName(), tutor.getSurname() ) );
                        tutorDTO.setDni( tutor.getDni() );
                        tutorDTO.setGender( tutor.getGender()
