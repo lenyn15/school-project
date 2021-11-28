@@ -8,14 +8,15 @@ import school.project.servicestudent.exception.ApiRequestException;
 import school.project.servicestudent.response.Response;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.ResponseEntity.*;
-import static school.project.servicestudent.response.Response.*;
+import static org.springframework.http.ResponseEntity.ok;
+import static school.project.servicestudent.enums.Status.HABILITADO;
+import static school.project.servicestudent.enums.Status.INHABILITADO;
+import static school.project.servicestudent.response.Response.builder;
 import static school.project.servicestudent.validation.Message.formatMessage;
 
 @RestController
@@ -31,7 +32,19 @@ public class TutorController {
     public ResponseEntity<Response> getAll() {
         return ok( builder().dateTime( now() )
                             .data( of( "tutors", tutorService.showAll() ) )
-                            .message( "Todos los tutores cargados" )
+                            .message( "Todos los tutores cargados correctamente" )
+                            .status( OK )
+                            .statusCode( OK.value() )
+                            .build() );
+    }
+
+    @GetMapping( path = "/status/{status}" )
+    public ResponseEntity<Response> searchByStatus( @PathVariable( "status" ) Long status ) {
+        return ok( builder().dateTime( now() )
+                            .data( of( "tutors", tutorService.filterByStatus( status ) ) )
+                            .message( status == 1 ?
+                                      "Tutores filtrados correctamente por el estado " + HABILITADO :
+                                      "Tutores filtrados correctamente por el estado " + INHABILITADO )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -39,7 +52,7 @@ public class TutorController {
 
     @GetMapping( path = "/filter/{filter}" )
     public ResponseEntity<Response> search( @PathVariable( "filter" ) String word ) {
-        List<Tutor> tutorList = tutorService.searchTutors( word );
+        List<TutorDTO> tutorList = tutorService.searchTutors( word );
         return ok( builder().dateTime( now() )
                             .data( of( "tutors", tutorList ) )
                             .message( tutorList.isEmpty() ?
@@ -61,7 +74,7 @@ public class TutorController {
     }
 
     @GetMapping( path = "/{id}" )
-    public ResponseEntity<Response> getTutor( @PathVariable( "id" ) int idTutor ) {
+    public ResponseEntity<Response> getTutor( @PathVariable( "id" ) Long idTutor ) {
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.getOne( idTutor ) ) )
                             .status( OK )
@@ -70,39 +83,50 @@ public class TutorController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> addOne( @Valid @RequestBody Tutor tutor,
+    public ResponseEntity<Response> addOne( @Valid @RequestBody TutorDTO tutor,
                                             BindingResult result ) {
         if ( result.hasErrors() ) {
             throw new ApiRequestException( formatMessage( result ) );
         }
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.add( tutor ) ) )
-                            .message( "Tutor creado correctamente" )
+                            .message( String.format( "Tutor %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
                             .status( CREATED )
                             .statusCode( CREATED.value() )
                             .build() );
     }
 
-    @PutMapping( path = "/{id}" )
-    public ResponseEntity<Response> updateOne( @PathVariable( "id" ) int idTutor,
-                                               @Valid @RequestBody Tutor tutor,
+    @PutMapping
+    public ResponseEntity<Response> updateOne( @Valid @RequestBody TutorDTO tutorDTO,
                                                BindingResult result ) {
         if ( result.hasErrors() ) {
             throw new ApiRequestException( formatMessage( result ) );
         }
         return ok( builder().dateTime( now() )
-                            .data( of( "tutor", tutorService.update( idTutor, tutor ) ) )
+                            .data( of( "tutor", tutorService.update( tutorDTO ) ) )
                             .message( "Datos actualizados correctamente" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
-    @DeleteMapping( path = "/{id}" )
-    public ResponseEntity<Response> deleteOne( @PathVariable( "id" ) int idTutor ) {
-        tutorService.destroy( idTutor );
+    @DeleteMapping( path = "/disable/{id}" )
+    public ResponseEntity<Response> disableOne( @PathVariable( "id" ) Long idTutor ) {
+        TutorDTO tutor = tutorService.getOne( idTutor );
         return ok( builder().dateTime( now() )
-                            .message( "Tutor con id " + idTutor + ", eliminado" )
+                            .data( of( "tutor", tutorService.disable( idTutor ) ) )
+                            .message( String.format( "Tutor %s %s ha sido inhabilitado", tutor.getName(), tutor.getSurname() ) )
+                            .status( GONE )
+                            .statusCode( GONE.value() )
+                            .build() );
+    }
+
+    @DeleteMapping( path = "/enable/{id}" )
+    public ResponseEntity<Response> enableOne( @PathVariable( "id" ) Long idTutor ) {
+        TutorDTO tutor = tutorService.getOne( idTutor );
+        return ok( builder().dateTime( now() )
+                            .data( of( "tutor", tutorService.enable( idTutor ) ) )
+                            .message( String.format( "Tutor %s %s ha sido habilitado", tutor.getName(), tutor.getSurname() ) )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
