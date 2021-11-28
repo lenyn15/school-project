@@ -22,8 +22,8 @@ public class TutorMethods {
 
     private final TutorRepository tutorRepository;
 
-    public String validate_tutor( TutorDTO tutorDTO,
-                                  String action ) {
+    public String validate( TutorDTO tutorDTO,
+                            String action ) {
         String message = "";
         Tutor tutorDB = new Tutor();
         if ( Objects.equals( action, "update" ) ) {
@@ -55,8 +55,8 @@ public class TutorMethods {
         return message;
     }
 
-    public Tutor saveTutor( TutorDTO tutorDTO,
-                            String action ) {
+    public Tutor save( TutorDTO tutorDTO,
+                       String action ) {
         Tutor tutor = new Tutor();
         if ( Objects.equals( action, "update" ) ) {
             tutor = tutorRepository.findById( tutorDTO.getId() )

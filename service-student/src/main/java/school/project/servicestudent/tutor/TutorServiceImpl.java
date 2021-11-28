@@ -82,9 +82,9 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor add( TutorDTO tutorDTO ) {
-        String message = tutorMethods.validate_tutor( tutorDTO, "" );
+        String message = tutorMethods.validate( tutorDTO, "" );
         if ( Objects.equals( message, "" ) ) {
-            return tutorMethods.saveTutor( tutorDTO, "" );
+            return tutorMethods.save( tutorDTO, "" );
         } else {
             throw new ApiRequestException( message );
         }
@@ -92,9 +92,9 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor update( TutorDTO tutorDTO ) {
-        String message = tutorMethods.validate_tutor( tutorDTO, "update" );
+        String message = tutorMethods.validate( tutorDTO, "update" );
         if ( Objects.equals( message, "" ) ) {
-            return tutorMethods.saveTutor( tutorDTO, "update" );
+            return tutorMethods.save( tutorDTO, "update" );
         } else {
             throw new ApiRequestException( message );
         }
