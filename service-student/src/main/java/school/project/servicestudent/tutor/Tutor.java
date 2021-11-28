@@ -28,7 +28,6 @@ import static javax.persistence.GenerationType.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class Tutor implements Serializable {
 
     @Id
