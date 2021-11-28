@@ -85,7 +85,6 @@ public class Tutor implements Serializable {
     private String occupation;
 
     @Column( name = "estado",
-             nullable = false,
-             length = 10 )
+             nullable = false )
     private Boolean status;
 }
