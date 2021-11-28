@@ -1,13 +1,16 @@
 package school.project.servicestudent.tutor;
 
 import lombok.*;
+import school.project.servicestudent.enums.Gender;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+import static javax.persistence.EnumType.*;
 import static javax.persistence.GenerationType.*;
 
 @Entity
@@ -23,10 +26,8 @@ import static javax.persistence.GenerationType.*;
                                    columnNames = "email" )
         } )
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
-@Builder
 @ToString
 public class Tutor implements Serializable {
 
@@ -34,7 +35,7 @@ public class Tutor implements Serializable {
     @GeneratedValue( strategy = AUTO )
     @Column( nullable = false,
              updatable = false )
-    private int id;
+    private Long id;
 
     @NotEmpty( message = "Ingrese el nombre del apoderado" )
     @Column( name = "nombres",
@@ -48,11 +49,11 @@ public class Tutor implements Serializable {
              length = 45 )
     private String surname;
 
-    @NotEmpty( message = "Seleccione el sexo del apoderado" )
+    @NotNull
+    @Enumerated( STRING )
     @Column( name = "sexo",
-             nullable = false,
-             length = 10 )
-    private String gender;
+             nullable = false )
+    private Gender gender;
 
     @NotEmpty( message = "Ingrese el dni del apoderado" )
     @Size( min = 8,
@@ -82,4 +83,9 @@ public class Tutor implements Serializable {
              nullable = false,
              length = 45 )
     private String occupation;
+
+    @Column( name = "estado",
+             nullable = false,
+             length = 10 )
+    private Boolean status;
 }
