@@ -10,13 +10,14 @@ import school.project.servicestudent.response.Response;
 import javax.validation.Valid;
 import java.util.List;
 
+import static java.lang.String.*;
 import static java.time.LocalDateTime.now;
 import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.ok;
 import static school.project.servicestudent.enums.Status.HABILITADO;
 import static school.project.servicestudent.enums.Status.INHABILITADO;
-import static school.project.servicestudent.response.Response.builder;
+import static school.project.servicestudent.response.Response.*;
 import static school.project.servicestudent.validation.Message.formatMessage;
 
 @RestController
@@ -90,7 +91,7 @@ public class TutorController {
         }
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.add( tutor ) ) )
-                            .message( String.format( "Tutor %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Tutor %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
                             .status( CREATED )
                             .statusCode( CREATED.value() )
                             .build() );
@@ -115,7 +116,7 @@ public class TutorController {
         TutorDTO tutor = tutorService.getOne( idTutor );
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.disable( idTutor ) ) )
-                            .message( String.format( "Tutor %s %s ha sido inhabilitado", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Tutor %s ha sido inhabilitado", tutor.getComplete_name() ) )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
@@ -126,7 +127,7 @@ public class TutorController {
         TutorDTO tutor = tutorService.getOne( idTutor );
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutorService.enable( idTutor ) ) )
-                            .message( String.format( "Tutor %s %s ha sido habilitado", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Tutor %s ha sido habilitado", tutor.getComplete_name() ) )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
