@@ -6,13 +6,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface TutorRepository extends JpaRepository<Tutor, Integer> {
+public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
     @Query( value = "{ call filter_tutors(:filter) }",
             nativeQuery = true )
     List<Tutor> filterTutor( @Param( "filter" ) String filter );
+
+    List<Tutor> findByStatus( Boolean status );
 
     @Query( "select "
             + "case when count(t) > 0 then "
@@ -29,4 +32,7 @@ public interface TutorRepository extends JpaRepository<Tutor, Integer> {
     Boolean existEmail( @Param( "email" ) String email );
 
     Tutor findByDni( String dni );
+
+    Optional<Tutor> findByNameAndSurname( String name,
+                                          String surname );
 }
