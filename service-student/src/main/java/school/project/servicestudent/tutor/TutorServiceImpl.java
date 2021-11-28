@@ -85,8 +85,9 @@ public class TutorServiceImpl implements TutorService {
         String message = methods.validate_tutor( tutorDTO, "" );
         if ( Objects.equals( message, "" ) ) {
             return methods.saveTutor( tutorDTO, "" );
+        } else {
+            throw new ApiRequestException( message );
         }
-        return null;
     }
 
     @Override
@@ -94,8 +95,9 @@ public class TutorServiceImpl implements TutorService {
         String message = methods.validate_tutor( tutorDTO, "update" );
         if ( Objects.equals( message, "" ) ) {
             return methods.saveTutor( tutorDTO, "update" );
+        } else {
+            throw new ApiRequestException( message );
         }
-        return null;
     }
 
     @Transactional
