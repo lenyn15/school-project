@@ -3,7 +3,9 @@ package school.project.servicestudent.tutor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.project.servicestudent.exception.ApiRequestException;
+import school.project.servicestudent.validation.Methods;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,84 +14,113 @@ import java.util.Objects;
 public class TutorServiceImpl implements TutorService {
 
     private final TutorRepository tutorRepository;
+    private final Methods methods;
 
     @Override
-    public List<Tutor> showAll() {
+    public List<TutorDTO> showAll() {
         List<Tutor> tutorList = tutorRepository.findAll();
         if ( tutorList.isEmpty() ) {
             throw new ApiRequestException( "No hay apoderados registrados" );
         }
-        return tutorList;
+        return methods.getList( tutorList );
     }
 
     @Override
-    public List<Tutor> searchTutors( String filter ) {
-        return tutorRepository.filterTutor( filter );
+    public List<TutorDTO> searchTutors( String filter ) {
+        List<Tutor> tutorList = tutorRepository.filterTutor( filter );
+        return methods.getList( tutorList );
     }
 
     @Override
-    public Tutor searchByDni( String dni ) {
+    public List<TutorDTO> filterByStatus( Long status ) {
+        Boolean tutorStatus = status == 1;
+        List<Tutor> tutorList = tutorRepository.findByStatus( tutorStatus );
+        return methods.getList( tutorList );
+    }
+
+    @Override
+    public TutorDTO searchByDni( String dni ) {
         Boolean existDni = tutorRepository.existDni( dni );
         if ( !existDni ) {
-            throw new ApiRequestException( "El apoderado con dni "
-                                                   + dni
-                                                   + " no esta registrado" );
+            throw new ApiRequestException( String.format( "El apoderado con dni %s no esta registrado", dni ) );
         }
-        return tutorRepository.findByDni( dni );
+        Tutor tutorDB = tutorRepository.findByDni( dni );
+        if ( tutorDB.getStatus() ) {
+            TutorDTO tutorDTO = new TutorDTO();
+            tutorDTO.setName( tutorDB.getName() );
+            tutorDTO.setSurname( tutorDB.getSurname() );
+
+            return tutorDTO;
+        } else {
+            throw new ApiRequestException( String.format( "El Tutor %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+        }
     }
 
     @Override
-    public Tutor getOne( int id ) {
-        return tutorRepository.findById( id )
-                              .orElse( null );
+    public TutorDTO getOne( Long id ) {
+        Tutor tutorDB = tutorRepository.findById( id )
+                                       .orElse( null );
+        assert tutorDB != null;
+        if ( tutorDB.getStatus() ) {
+            TutorDTO tutorDTO = new TutorDTO();
+            tutorDTO.setComplete_name( String.format( "%s %s", tutorDB.getName(), tutorDB.getSurname() ) );
+            tutorDTO.setGender( tutorDB.getGender()
+                                       .toString() );
+            tutorDTO.setDni( tutorDB.getDni() );
+            tutorDTO.setPhone( tutorDB.getPhone() );
+            tutorDTO.setEmail( tutorDB.getEmail() );
+            tutorDTO.setOccupation( tutorDB.getOccupation() );
+
+            return tutorDTO;
+        }
+
+        if ( !tutorDB.getStatus() ) {
+            throw new ApiRequestException( String.format( "El Tutor %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+        }
+        return null;
     }
 
     @Override
-    public Tutor add( Tutor tutor ) {
-        Boolean existDni = tutorRepository.existDni( tutor.getDni() );
-        if ( existDni ) {
-            throw new ApiRequestException( "El DNI ingresado ya existe, ingrese otro" );
+    public Tutor add( TutorDTO tutorDTO ) {
+        String message = methods.validate_tutor( tutorDTO, "" );
+        if ( Objects.equals( message, "" ) ) {
+            return methods.saveTutor( tutorDTO, "" );
         }
-
-        Boolean existEmail = tutorRepository.existEmail( tutor.getEmail() );
-        if ( existEmail ) {
-            throw new ApiRequestException( "El email ingresado ya existe, ingrese otro" );
-        }
-        return tutorRepository.save( tutor );
+        return null;
     }
 
     @Override
-    public Tutor update( int id,
-                         Tutor tutor ) {
-        Tutor tutorDB = getOne( id );
-        if ( !Objects.equals( tutorDB.getDni(), tutor.getDni() ) ) {
-            Boolean existDni = tutorRepository.existDni( tutor.getDni() );
-            if ( existDni ) {
-                throw new ApiRequestException( "El DNI ingresado ya existe, ingrese otro" );
-            }
-
-            tutorDB.setDni( tutor.getDni() );
+    public Tutor update( TutorDTO tutorDTO ) {
+        String message = methods.validate_tutor( tutorDTO, "update" );
+        if ( Objects.equals( message, "" ) ) {
+            return methods.saveTutor( tutorDTO, "update" );
         }
-
-        if ( !Objects.equals( tutorDB.getEmail(), tutor.getEmail() ) ) {
-            Boolean existEmail = tutorRepository.existEmail( tutor.getEmail() );
-            if ( existEmail ) {
-                throw new ApiRequestException( "El email ingresado ya existe, ingrese otro" );
-            }
-
-            tutorDB.setEmail( tutor.getEmail() );
-        }
-
-        tutorDB.setName( tutor.getName() );
-        tutorDB.setSurname( tutor.getSurname() );
-        tutorDB.setGender( tutor.getGender() );
-        tutorDB.setPhone( tutor.getPhone() );
-        tutorDB.setOccupation( tutor.getOccupation() );
-        return tutorRepository.save( tutorDB );
+        return null;
     }
 
-    @Override
-    public void destroy( int id ) {
-        tutorRepository.deleteById( id );
+    @Transactional
+    public Tutor disable( Long id ) {
+        Tutor tutorDB = tutorRepository.findById( id )
+                                       .orElse( null );
+        assert tutorDB != null;
+        if ( tutorDB.getStatus() ) {
+            tutorDB.setStatus( false );
+        } else {
+            throw new ApiRequestException( String.format( "Tutor %s %s, ya está inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+        }
+        return tutorDB;
+    }
+
+    @Transactional
+    public Tutor enable( Long id ) {
+        Tutor tutorDB = tutorRepository.findById( id )
+                                       .orElse( null );
+        assert tutorDB != null;
+        if ( !tutorDB.getStatus() ) {
+            tutorDB.setStatus( true );
+        } else {
+            throw new ApiRequestException( String.format( "Tutor %s %s, ya está habilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+        }
+        return tutorDB;
     }
 }
