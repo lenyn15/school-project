@@ -3,7 +3,7 @@ package school.project.servicestudent.tutor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.project.servicestudent.exception.ApiRequestException;
-import school.project.servicestudent.validation.Methods;
+import school.project.servicestudent.validation.TutorMethods;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.Objects;
 public class TutorServiceImpl implements TutorService {
 
     private final TutorRepository tutorRepository;
-    private final Methods methods;
+    private final TutorMethods tutorMethods;
 
     @Override
     public List<TutorDTO> showAll() {
@@ -22,20 +22,20 @@ public class TutorServiceImpl implements TutorService {
         if ( tutorList.isEmpty() ) {
             throw new ApiRequestException( "No hay apoderados registrados" );
         }
-        return methods.getList( tutorList );
+        return tutorMethods.getList( tutorList );
     }
 
     @Override
     public List<TutorDTO> searchTutors( String filter ) {
         List<Tutor> tutorList = tutorRepository.filterTutor( filter );
-        return methods.getList( tutorList );
+        return tutorMethods.getList( tutorList );
     }
 
     @Override
     public List<TutorDTO> filterByStatus( Long status ) {
         Boolean tutorStatus = status == 1;
         List<Tutor> tutorList = tutorRepository.findByStatus( tutorStatus );
-        return methods.getList( tutorList );
+        return tutorMethods.getList( tutorList );
     }
 
     @Override
@@ -82,9 +82,9 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor add( TutorDTO tutorDTO ) {
-        String message = methods.validate_tutor( tutorDTO, "" );
+        String message = tutorMethods.validate_tutor( tutorDTO, "" );
         if ( Objects.equals( message, "" ) ) {
-            return methods.saveTutor( tutorDTO, "" );
+            return tutorMethods.saveTutor( tutorDTO, "" );
         } else {
             throw new ApiRequestException( message );
         }
@@ -92,9 +92,9 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor update( TutorDTO tutorDTO ) {
-        String message = methods.validate_tutor( tutorDTO, "update" );
+        String message = tutorMethods.validate_tutor( tutorDTO, "update" );
         if ( Objects.equals( message, "" ) ) {
-            return methods.saveTutor( tutorDTO, "update" );
+            return tutorMethods.saveTutor( tutorDTO, "update" );
         } else {
             throw new ApiRequestException( message );
         }

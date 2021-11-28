@@ -18,7 +18,7 @@ import static school.project.servicestudent.enums.Status.INHABILITADO;
 
 @AllArgsConstructor
 @Component
-public class Methods {
+public class TutorMethods {
 
     private final TutorRepository tutorRepository;
 
