@@ -1,2 +1,24 @@
 server:
-  port: 8081
+    port: 8081
+    error:
+        include-message: always
+        include-binding-errors: always
+spring:
+    application:
+        name: service-student
+    profiles:
+        active: development
+    datasource:
+        driverClassName: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/student_db
+        username: root
+        password:
+    jpa:
+        open-in-view: false
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL5Dialect
+                format_sql: true
+        show-sql: true
