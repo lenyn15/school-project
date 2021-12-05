@@ -1,7 +1,11 @@
 package school.project.servicestudent.tutor;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import school.project.servicestudent.enums.Gender;
+import school.project.servicestudent.student.Student;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -9,9 +13,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
-import static javax.persistence.EnumType.*;
-import static javax.persistence.GenerationType.*;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table( name = "apoderado",
@@ -31,7 +38,7 @@ import static javax.persistence.GenerationType.*;
 public class Tutor implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = AUTO )
+    @GeneratedValue( strategy = IDENTITY )
     @Column( nullable = false,
              updatable = false )
     private Long id;
@@ -86,4 +93,10 @@ public class Tutor implements Serializable {
     @Column( name = "estado",
              nullable = false )
     private Boolean status;
+
+    @OneToMany( fetch = EAGER,
+                mappedBy = "tutor",
+                cascade = ALL )
+    @JsonManagedReference
+    private List<Student> students;
 }

@@ -1,22 +1,20 @@
-package school.project.servicestudent.tutor;
+package school.project.servicestudent.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import school.project.servicestudent.enums.Status;
-import school.project.servicestudent.student.StudentDTO;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @JsonInclude( NON_NULL )
-public class TutorDTO {
+public class StudentDTO {
     protected Long id;
     protected String name;
     protected String surname;
@@ -24,9 +22,9 @@ public class TutorDTO {
     protected Long id_gender;
     protected String gender;
     protected String dni;
-    protected String phone;
-    protected String email;
-    protected String occupation;
+    protected String birth_date;
+    protected LocalDate birthDate;
+    protected String address;
     protected Status status;
-    protected List<StudentDTO> students;
+    protected Long id_tutor;
 }

@@ -1,17 +1,14 @@
 package school.project.servicestudent.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 
-@AllArgsConstructor
-@Getter
-public class ApiException {
+public record ApiException(
+        String message,
+        Throwable throwable,
+        HttpStatus status,
+        ZonedDateTime zonedDateTime
+) {
 
-    private final String message;
-    private final Throwable throwable;
-    private final HttpStatus status;
-    private final ZonedDateTime zonedDateTime;
 }

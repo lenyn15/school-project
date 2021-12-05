@@ -11,28 +11,20 @@ import java.util.Optional;
 @Repository
 public interface TutorRepository extends JpaRepository<Tutor, Long> {
 
+    Tutor findByDni( String dni );
+
+    List<Tutor> findByStatus( Boolean status );
+
+    Optional<Tutor> findByNameAndSurname( String name, String surname );
+
+    @Query( value = "select case when count(t) > 0 then true else false end from Tutor t where t.dni = :dni" )
+    Boolean existDni( @Param( "dni" ) String dni );
+
+    @Query( value = "select case when count(t) > 0 then true else false end from Tutor t where t.email = :email" )
+    Boolean existEmail( @Param( "email" ) String email );
+
     @Query( value = "{ call filter_tutors(:filter) }",
             nativeQuery = true )
     List<Tutor> filterTutor( @Param( "filter" ) String filter );
 
-    List<Tutor> findByStatus( Boolean status );
-
-    @Query( "select "
-            + "case when count(t) > 0 then "
-            + "true else "
-            + "false end "
-            + "from Tutor t where t.dni = :dni" )
-    Boolean existDni( @Param( "dni" ) String dni );
-
-    @Query( "select "
-            + "case when count(t) > 0 then "
-            + "true else "
-            + "false end "
-            + "from Tutor t where t.email = :email" )
-    Boolean existEmail( @Param( "email" ) String email );
-
-    Tutor findByDni( String dni );
-
-    Optional<Tutor> findByNameAndSurname( String name,
-                                          String surname );
 }

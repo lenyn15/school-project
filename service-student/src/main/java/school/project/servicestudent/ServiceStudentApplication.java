@@ -1,13 +1,14 @@
 package school.project.servicestudent;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import static org.springframework.boot.SpringApplication.run;
 
 @SpringBootApplication
 public class ServiceStudentApplication {
 
     public static void main( String[] args ) {
-        SpringApplication.run( ServiceStudentApplication.class, args );
+        run( ServiceStudentApplication.class, args );
     }
 
 }

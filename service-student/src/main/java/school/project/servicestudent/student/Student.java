@@ -1,18 +1,22 @@
 package school.project.servicestudent.student;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import school.project.servicestudent.enums.Gender;
 import school.project.servicestudent.tutor.Tutor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.AUTO;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table( name = "estudiante",
@@ -25,15 +29,12 @@ import static javax.persistence.GenerationType.AUTO;
                                    columnNames = "dni" )
         } )
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-@Builder
-@ToString
 public class Student implements Serializable {
 
     @Id
-    @GeneratedValue( strategy = AUTO )
+    @GeneratedValue( strategy = IDENTITY )
     @Column( nullable = false,
              updatable = false )
     private Long id;
@@ -50,11 +51,11 @@ public class Student implements Serializable {
              length = 45 )
     private String surname;
 
-    @NotEmpty( message = "Seleccione el sexo del estudiante" )
+    @NotNull
+    @Enumerated( STRING )
     @Column( name = "sexo",
-             nullable = false,
-             length = 20 )
-    private String gender;
+             nullable = false )
+    private Gender gender;
 
     @NotEmpty( message = "Ingrese el dni del estudiante" )
     @Size( min = 8,
@@ -77,15 +78,12 @@ public class Student implements Serializable {
 
     @Column( name = "estado",
              length = 20 )
-    private String status;
+    private Boolean status;
 
-    @ToString.Exclude
-    @ManyToOne( fetch = LAZY )
+    @ManyToOne
+    @JsonBackReference
     @JoinColumn( name = "apoderado_id",
-                 foreignKey = @ForeignKey( name = "fk_apoderado" ) )
-    @JsonIgnoreProperties( {
-            "hibernateLazyInitializer",
-            "handler"
-    } )
+                 foreignKey = @ForeignKey( name = "fk_apoderado" ),
+                 nullable = false )
     private Tutor tutor;
 }

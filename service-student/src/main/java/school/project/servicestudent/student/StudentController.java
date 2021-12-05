@@ -1,4 +1,4 @@
-package school.project.servicestudent.tutor;
+package school.project.servicestudent.student;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,17 +22,17 @@ import static school.project.servicestudent.validation.Message.formatMessage;
 
 @RestController
 @CrossOrigin( origins = "*" )
-@RequestMapping( path = "/tutor",
+@RequestMapping( path = "/student",
                  produces = "application/json" )
-public record TutorController( TutorService tutorService ) {
+public record StudentController( StudentService studentService ) {
 
     @GetMapping
     public ResponseEntity<Response> getAll() {
-        Map<String, List<TutorDTO>> tutors = new java.util.HashMap<>();
-        tutors.put( "tutors", tutorService.showAll() );
+        Map<String, List<StudentDTO>> students = new java.util.HashMap<>();
+        students.put( "students", studentService.showAll() );
         return ok( builder().dateTime( now() )
-                            .data( tutors )
-                            .message( "Se cargaron correctamente todos los tutores" )
+                            .data( students )
+                            .message( "Se cargaron correctamente todos los estudiantes" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -40,11 +40,11 @@ public record TutorController( TutorService tutorService ) {
 
     @GetMapping( path = "/status/{status}" )
     public ResponseEntity<Response> searchByStatus( @PathVariable( "status" ) Long status ) {
-        String message = "Tutores filtrados correctamente por el estado ";
-        Map<String, List<TutorDTO>> tutors = new java.util.HashMap<>();
-        tutors.put( "tutors", tutorService.filterByStatus( status ) );
+        String message = "Estudiante filtrados correctamente por el estado ";
+        Map<String, List<StudentDTO>> students = new java.util.HashMap<>();
+        students.put( "students", studentService.filterByStatus( status ) );
         return ok( builder().dateTime( now() )
-                            .data( tutors )
+                            .data( students )
                             .message( status == 1 ? message + HABILITADO : message + INHABILITADO )
                             .status( OK )
                             .statusCode( OK.value() )
@@ -53,85 +53,85 @@ public record TutorController( TutorService tutorService ) {
 
     @GetMapping( path = "/filter/{filter}" )
     public ResponseEntity<Response> search( @PathVariable( "filter" ) String word ) {
-        List<TutorDTO> tutors = tutorService.searchTutors( word );
+        List<StudentDTO> students = studentService.searchStudents( word );
         return ok( builder().dateTime( now() )
-                            .data( of( "tutors", tutors ) )
-                            .message( tutors.isEmpty() ? "No se pudo realizar la busqueda" :
-                                      "Tutores filtrados correctamente" )
+                            .data( of( "students", students ) )
+                            .message( students.isEmpty() ? "No se pudo realizar la busqueda" :
+                                      "Estudiantes filtrados correctamente" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
     @GetMapping( path = "/find/{dni}" )
-    public ResponseEntity<Response> filterByDni( @PathVariable( "dni" ) String dniTutor ) {
-        Map<String, TutorDTO> tutor = new java.util.HashMap<>();
-        tutor.put( "tutor", tutorService.searchByDni( dniTutor ) );
+    public ResponseEntity<Response> filterByDni( @PathVariable( "dni" ) String dniStudent ) {
+        Map<String, StudentDTO> student = new java.util.HashMap<>();
+        student.put( "student", studentService.searchByDni( dniStudent ) );
         return ok( builder().dateTime( now() )
-                            .data( tutor )
-                            .message( "Tutor encontrado" )
+                            .data( student )
+                            .message( "Estudiante encontrado" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
     @GetMapping( path = "/{id}" )
-    public ResponseEntity<Response> getTutor( @PathVariable( "id" ) Long idTutor ) {
-        TutorDTO tutor = tutorService.getOne( idTutor );
+    public ResponseEntity<Response> getStudent( @PathVariable( "id" ) Long idStudent ) {
+        StudentDTO student = studentService.getOne( idStudent );
         return ok( builder().dateTime( now() )
-                            .data( of( "tutor", tutor ) )
-                            .message( format( "Informacion del tutor %s, cargada correctamente", tutor.getComplete_name() ) )
+                            .data( of( "student", student ) )
+                            .message( format( "Informacion del estudiante %s, cargada correctamente", student.getComplete_name() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
     @PostMapping
-    public ResponseEntity<Response> addOne( @Valid @RequestBody TutorDTO tutor, BindingResult result ) {
+    public ResponseEntity<Response> addOne( @Valid @RequestBody StudentDTO studentDTO, BindingResult result ) {
         if ( result.hasErrors() ) {
             throw new ApiRequestException( formatMessage( result ) );
         }
-        Map<String, Tutor> newTutor = new java.util.HashMap<>();
-        newTutor.put( "tutor", tutorService.add( tutor ) );
+        Map<String, Student> newStudent = new java.util.HashMap<>();
+        newStudent.put( "student", studentService.add( studentDTO ) );
         return ok( builder().dateTime( now() )
-                            .data( newTutor )
-                            .message( format( "Tutor %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
+                            .data( newStudent )
+                            .message( format( "Estudiante %s %s creado correctamente", studentDTO.getName(), studentDTO.getSurname() ) )
                             .status( CREATED )
                             .statusCode( CREATED.value() )
                             .build() );
     }
 
     @PutMapping
-    public ResponseEntity<Response> updateOne( @Valid @RequestBody TutorDTO tutorDTO, BindingResult result ) {
+    public ResponseEntity<Response> updateOne( @Valid @RequestBody StudentDTO studentDTO, BindingResult result ) {
         if ( result.hasErrors() ) {
             throw new ApiRequestException( formatMessage( result ) );
         }
-        Tutor tutorUpdated = tutorService.update( tutorDTO );
+        Student studentUpdated = studentService.update( studentDTO );
         return ok( builder().dateTime( now() )
-                            .data( of( "tutorUpdated", tutorUpdated ) )
-                            .message( format( "Datos del tutor %s %s actualizados correctamente", tutorUpdated.getName(), tutorUpdated.getSurname() ) )
+                            .data( of( "studentUpdated", studentUpdated ) )
+                            .message( format( "Datos del estudiante %s %s actualizados correctamente", studentUpdated.getName(), studentUpdated.getSurname() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
     @DeleteMapping( path = "/disable/{id}" )
-    public ResponseEntity<Response> disableOne( @PathVariable( "id" ) Long idTutor ) {
-        Tutor tutor = tutorService.disable( idTutor );
+    public ResponseEntity<Response> disableOne( @PathVariable( "id" ) Long idStudent ) {
+        Student studentDisabled = studentService.disable( idStudent );
         return ok( builder().dateTime( now() )
-                            .data( of( "tutor", tutor ) )
-                            .message( format( "Tutor %s %s ha sido inhabilitado", tutor.getName(), tutor.getSurname() ) )
+                            .data( of( "studentDisabled", studentDisabled ) )
+                            .message( format( "Estudiante %s %s ha sido inhabilitado", studentDisabled.getName(), studentDisabled.getSurname() ) )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
     }
 
     @DeleteMapping( path = "/enable/{id}" )
-    public ResponseEntity<Response> enableOne( @PathVariable( "id" ) Long idTutor ) {
-        Tutor tutor = tutorService.enable( idTutor );
+    public ResponseEntity<Response> enableOne( @PathVariable( "id" ) Long idStudent ) {
+        Student studentEnabled = studentService.enable( idStudent );
         return ok( builder().dateTime( now() )
-                            .data( of( "tutor", tutor ) )
-                            .message( format( "Tutor %s %s ha sido habilitado", tutor.getName(), tutor.getSurname() ) )
+                            .data( of( "studentEnabled", studentEnabled ) )
+                            .message( format( "Estudiante %s %s ha sido habilitado", studentEnabled.getName(), studentEnabled.getSurname() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );

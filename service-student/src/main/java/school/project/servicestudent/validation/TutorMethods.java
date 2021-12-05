@@ -1,6 +1,5 @@
 package school.project.servicestudent.validation;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.project.servicestudent.tutor.Tutor;
 import school.project.servicestudent.tutor.TutorDTO;
@@ -9,33 +8,31 @@ import school.project.servicestudent.tutor.TutorRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static school.project.servicestudent.enums.Gender.FEMENINO;
 import static school.project.servicestudent.enums.Gender.MASCULINO;
 import static school.project.servicestudent.enums.Status.HABILITADO;
 import static school.project.servicestudent.enums.Status.INHABILITADO;
+import static school.project.servicestudent.tutor.TutorDTO.*;
 
-@AllArgsConstructor
 @Component
-public class TutorMethods {
+public record TutorMethods( TutorRepository tutorRepository ) {
 
-    private final TutorRepository tutorRepository;
-
-    public String validate( TutorDTO tutorDTO,
-                            String action ) {
+    public String validate( TutorDTO tutorDTO, String action ) {
         String message = "";
         Tutor tutorDB = new Tutor();
         if ( Objects.equals( action, "update" ) ) {
-            tutorDB = tutorRepository.findById( tutorDTO.getId() )
-                                     .orElse( null );
+            tutorDB = tutorRepository.findById( tutorDTO.getId() ).orElse( null );
         }
         assert tutorDB != null;
 
-        if ( !Objects.equals( tutorDB.getName(), tutorDTO.getName() ) && !Objects.equals( tutorDB.getSurname(), tutorDTO.getSurname() ) ) {
+        if ( !Objects.equals( tutorDB.getName(), tutorDTO.getName() ) &&
+                !Objects.equals( tutorDB.getSurname(), tutorDTO.getSurname() ) ) {
             Optional<Tutor> complete_nameDB = tutorRepository.findByNameAndSurname( tutorDTO.getName(), tutorDTO.getSurname() );
             if ( complete_nameDB.isPresent() ) {
-                return String.format( "Tutor con nombre %s %s ya existe", tutorDTO.getName(), tutorDTO.getSurname() );
+                return format( "Tutor con nombre %s %s ya existe", tutorDTO.getName(), tutorDTO.getSurname() );
             }
         }
 
@@ -55,19 +52,15 @@ public class TutorMethods {
         return message;
     }
 
-    public Tutor save( TutorDTO tutorDTO,
-                       String action ) {
+    public Tutor save( TutorDTO tutorDTO, String action ) {
         Tutor tutor = new Tutor();
         if ( Objects.equals( action, "update" ) ) {
-            tutor = tutorRepository.findById( tutorDTO.getId() )
-                                   .orElse( null );
+            tutor = tutorRepository.findById( tutorDTO.getId() ).orElse( null );
         }
         assert tutor != null;
         tutor.setName( tutorDTO.getName() );
         tutor.setSurname( tutorDTO.getSurname() );
-        tutor.setGender( tutorDTO.getId_gender() == 1 ?
-                         MASCULINO :
-                         FEMENINO );
+        tutor.setGender( tutorDTO.getId_gender() == 1 ? MASCULINO : FEMENINO );
         if ( !Objects.equals( tutor.getDni(), tutorDTO.getDni() ) ) {
             tutor.setDni( tutorDTO.getDni() );
         }
@@ -83,18 +76,12 @@ public class TutorMethods {
 
     public List<TutorDTO> getList( List<Tutor> list ) {
         return list.stream()
-                   .map( tutor -> {
-                       TutorDTO tutorDTO = new TutorDTO();
-                       tutorDTO.setId( tutor.getId() );
-                       tutorDTO.setComplete_name( String.format( "%s %s", tutor.getName(), tutor.getSurname() ) );
-                       tutorDTO.setDni( tutor.getDni() );
-                       tutorDTO.setGender( tutor.getGender()
-                                                .toString() );
-                       tutorDTO.setStatus( tutor.getStatus() ?
-                                           HABILITADO :
-                                           INHABILITADO );
-                       return tutorDTO;
-                   } )
-                   .collect( Collectors.toList() );
+                   .map( tutor -> builder().id( tutor.getId() )
+                                           .complete_name( format( "%s %s", tutor.getName(), tutor.getSurname() ) )
+                                           .dni( tutor.getDni() )
+                                           .gender( tutor.getGender().toString() )
+                                           .status( tutor.getStatus() ? HABILITADO : INHABILITADO )
+                                           .build() )
+                   .collect( toList() );
     }
 }
