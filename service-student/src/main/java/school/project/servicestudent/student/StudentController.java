@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.ok;
 import static school.project.servicestudent.enums.Status.HABILITADO;
 import static school.project.servicestudent.enums.Status.INHABILITADO;
-import static school.project.servicestudent.response.Response.builder;
+import static school.project.servicestudent.response.Response.*;
 
 @RestController
 @CrossOrigin( origins = "*" )
