@@ -1,12 +1,9 @@
 package school.project.servicestudent.tutor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import school.project.servicestudent.exception.ApiRequestException;
 import school.project.servicestudent.response.Response;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +15,6 @@ import static org.springframework.http.ResponseEntity.ok;
 import static school.project.servicestudent.enums.Status.HABILITADO;
 import static school.project.servicestudent.enums.Status.INHABILITADO;
 import static school.project.servicestudent.response.Response.*;
-import static school.project.servicestudent.validation.Message.formatMessage;
 
 @RestController
 @CrossOrigin( origins = "*" )
@@ -32,7 +28,7 @@ public record TutorController( TutorService tutorService ) {
         tutors.put( "tutors", tutorService.showAll() );
         return ok( builder().dateTime( now() )
                             .data( tutors )
-                            .message( "Se cargaron correctamente todos los tutores" )
+                            .message( "Se cargaron correctamente todos los apoderados" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -40,7 +36,7 @@ public record TutorController( TutorService tutorService ) {
 
     @GetMapping( path = "/status/{status}" )
     public ResponseEntity<Response> searchByStatus( @PathVariable( "status" ) Long status ) {
-        String message = "Tutores filtrados correctamente por el estado ";
+        String message = "Apoderados filtrados correctamente por el estado ";
         Map<String, List<TutorDTO>> tutors = new java.util.HashMap<>();
         tutors.put( "tutors", tutorService.filterByStatus( status ) );
         return ok( builder().dateTime( now() )
@@ -57,7 +53,7 @@ public record TutorController( TutorService tutorService ) {
         return ok( builder().dateTime( now() )
                             .data( of( "tutors", tutors ) )
                             .message( tutors.isEmpty() ? "No se pudo realizar la busqueda" :
-                                      "Tutores filtrados correctamente" )
+                                      "Apoderados filtrados correctamente" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -69,7 +65,7 @@ public record TutorController( TutorService tutorService ) {
         tutor.put( "tutor", tutorService.searchByDni( dniTutor ) );
         return ok( builder().dateTime( now() )
                             .data( tutor )
-                            .message( "Tutor encontrado" )
+                            .message( "Apoderado encontrado" )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -80,36 +76,30 @@ public record TutorController( TutorService tutorService ) {
         TutorDTO tutor = tutorService.getOne( idTutor );
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutor ) )
-                            .message( format( "Informacion del tutor %s, cargada correctamente", tutor.getComplete_name() ) )
+                            .message( format( "Informacion del apoderado %s, cargada correctamente", tutor.getComplete_name() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
     }
 
     @PostMapping
-    public ResponseEntity<Response> addOne( @Valid @RequestBody TutorDTO tutor, BindingResult result ) {
-        if ( result.hasErrors() ) {
-            throw new ApiRequestException( formatMessage( result ) );
-        }
+    public ResponseEntity<Response> addOne( @RequestBody TutorDTO tutor ) {
         Map<String, Tutor> newTutor = new java.util.HashMap<>();
         newTutor.put( "tutor", tutorService.add( tutor ) );
         return ok( builder().dateTime( now() )
                             .data( newTutor )
-                            .message( format( "Tutor %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Apoderado %s %s creado correctamente", tutor.getName(), tutor.getSurname() ) )
                             .status( CREATED )
                             .statusCode( CREATED.value() )
                             .build() );
     }
 
     @PutMapping
-    public ResponseEntity<Response> updateOne( @Valid @RequestBody TutorDTO tutorDTO, BindingResult result ) {
-        if ( result.hasErrors() ) {
-            throw new ApiRequestException( formatMessage( result ) );
-        }
+    public ResponseEntity<Response> updateOne( @RequestBody TutorDTO tutorDTO ) {
         Tutor tutorUpdated = tutorService.update( tutorDTO );
         return ok( builder().dateTime( now() )
                             .data( of( "tutorUpdated", tutorUpdated ) )
-                            .message( format( "Datos del tutor %s %s actualizados correctamente", tutorUpdated.getName(), tutorUpdated.getSurname() ) )
+                            .message( format( "Datos del apoderado %s %s actualizados correctamente", tutorUpdated.getName(), tutorUpdated.getSurname() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );
@@ -120,7 +110,7 @@ public record TutorController( TutorService tutorService ) {
         Tutor tutor = tutorService.disable( idTutor );
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutor ) )
-                            .message( format( "Tutor %s %s ha sido inhabilitado", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Apoderado %s %s ha sido inhabilitado", tutor.getName(), tutor.getSurname() ) )
                             .status( GONE )
                             .statusCode( GONE.value() )
                             .build() );
@@ -131,7 +121,7 @@ public record TutorController( TutorService tutorService ) {
         Tutor tutor = tutorService.enable( idTutor );
         return ok( builder().dateTime( now() )
                             .data( of( "tutor", tutor ) )
-                            .message( format( "Tutor %s %s ha sido habilitado", tutor.getName(), tutor.getSurname() ) )
+                            .message( format( "Apoderado %s %s ha sido habilitado", tutor.getName(), tutor.getSurname() ) )
                             .status( OK )
                             .statusCode( OK.value() )
                             .build() );

@@ -48,14 +48,14 @@ public record TutorService(
         if ( tutorDB.getStatus() ) {
             return builder().id( tutorDB.getId() ).name( tutorDB.getName() ).surname( tutorDB.getSurname() ).build();
         } else {
-            throw new ApiRequestException( format( "El Tutor %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+            throw new ApiRequestException( format( "El apoderado %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
     }
 
     public TutorDTO getOne( Long id ) {
         Tutor tutorDB = tutorRepository.findById( id ).orElse( null );
         if ( tutorDB == null ) {
-            throw new ApiRequestException( format( "El tutor con id %d no existe", id ) );
+            throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
         if ( tutorDB.getStatus() ) {
             return builder().complete_name( format( "%s %s", tutorDB.getName(), tutorDB.getSurname() ) )
@@ -76,7 +76,7 @@ public record TutorService(
                                               .collect( toList() ) )
                             .build();
         } else {
-            throw new ApiRequestException( format( "El Tutor %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+            throw new ApiRequestException( format( "El apoderado %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
     }
 
@@ -101,28 +101,28 @@ public record TutorService(
     public Tutor disable( Long id ) {
         Tutor tutorDB = tutorRepository.findById( id ).orElse( null );
         if ( tutorDB == null ) {
-            throw new ApiRequestException( format( "El tutor con id %d no existe", id ) );
+            throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
         if ( tutorDB.getStatus() ) {
             tutorDB.setStatus( false );
             tutorRepository.save( tutorDB );
             return tutorDB;
         } else {
-            throw new ApiRequestException( format( "Tutor %s %s, ya está inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+            throw new ApiRequestException( format( "Apoderado %s %s, ya está inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
     }
 
     public Tutor enable( Long id ) {
         Tutor tutorDB = tutorRepository.findById( id ).orElse( null );
         if ( tutorDB == null ) {
-            throw new ApiRequestException( format( "El tutor con id %d no existe", id ) );
+            throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
         if ( !tutorDB.getStatus() ) {
             tutorDB.setStatus( true );
             tutorRepository.save( tutorDB );
             return tutorDB;
         } else {
-            throw new ApiRequestException( format( "Tutor %s %s, ya está habilitado", tutorDB.getName(), tutorDB.getSurname() ) );
+            throw new ApiRequestException( format( "Apoderado %s %s, ya está habilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
     }
 }

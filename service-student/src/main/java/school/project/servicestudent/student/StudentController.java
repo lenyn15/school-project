@@ -1,12 +1,9 @@
 package school.project.servicestudent.student;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import school.project.servicestudent.exception.ApiRequestException;
 import school.project.servicestudent.response.Response;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.ok;
 import static school.project.servicestudent.enums.Status.HABILITADO;
 import static school.project.servicestudent.enums.Status.INHABILITADO;
-import static school.project.servicestudent.response.Response.*;
-import static school.project.servicestudent.validation.Message.formatMessage;
+import static school.project.servicestudent.response.Response.builder;
 
 @RestController
 @CrossOrigin( origins = "*" )
@@ -87,10 +83,7 @@ public record StudentController( StudentService studentService ) {
     }
 
     @PostMapping
-    public ResponseEntity<Response> addOne( @Valid @RequestBody StudentDTO studentDTO, BindingResult result ) {
-        if ( result.hasErrors() ) {
-            throw new ApiRequestException( formatMessage( result ) );
-        }
+    public ResponseEntity<Response> addOne( @RequestBody StudentDTO studentDTO ) {
         Map<String, Student> newStudent = new java.util.HashMap<>();
         newStudent.put( "student", studentService.add( studentDTO ) );
         return ok( builder().dateTime( now() )
@@ -102,10 +95,7 @@ public record StudentController( StudentService studentService ) {
     }
 
     @PutMapping
-    public ResponseEntity<Response> updateOne( @Valid @RequestBody StudentDTO studentDTO, BindingResult result ) {
-        if ( result.hasErrors() ) {
-            throw new ApiRequestException( formatMessage( result ) );
-        }
+    public ResponseEntity<Response> updateOne( @RequestBody StudentDTO studentDTO ) {
         Student studentUpdated = studentService.update( studentDTO );
         return ok( builder().dateTime( now() )
                             .data( of( "studentUpdated", studentUpdated ) )

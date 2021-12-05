@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.time.LocalDate.now;
+import static java.time.Period.between;
 import static java.util.stream.Collectors.toList;
 import static school.project.servicestudent.enums.Gender.FEMENINO;
 import static school.project.servicestudent.enums.Gender.MASCULINO;
@@ -30,22 +32,52 @@ public record StudentMethods(
         Student studentDB = new Student();
         if ( Objects.equals( action, "update" ) ) {
             studentDB = studentRepository.findById( studentDTO.getId() ).orElse( null );
+            if ( studentDB == null ) {
+                return format( "El estudiante con id %d no existe", studentDTO.getId() );
+            }
         }
 
-        assert studentDB != null;
+        // Valida el nombre y apellido del estudiante
         if ( !Objects.equals( studentDB.getName(), studentDTO.getName() ) &&
                 !Objects.equals( studentDB.getSurname(), studentDTO.getSurname() ) ) {
             Optional<Student> complete_nameDB = studentRepository.findByNameAndSurname( studentDTO.getName(), studentDTO.getSurname() );
             if ( complete_nameDB.isPresent() ) {
-                return format( "Tutor con nombre %s %s ya existe", studentDTO.getName(), studentDTO.getSurname() );
+                return format( "Estudiante con nombre %s %s ya existe", studentDTO.getName(), studentDTO.getSurname() );
+            }
+            if ( studentDTO.getName().isEmpty() || studentDTO.getName() == null ) {
+                return "El campo nombre del estudiante esta vacío";
+            }
+            if ( studentDTO.getSurname().isEmpty() || studentDTO.getSurname() == null ) {
+                return "El campo apellido del estudiante esta vacío";
             }
         }
 
+        // Valida el DNI del estudiante
         if ( !Objects.equals( studentDB.getDni(), studentDTO.getDni() ) ) {
             Boolean existDni = studentRepository.existDni( studentDTO.getDni() );
             if ( existDni ) {
                 return "El DNI ingresado ya existe, ingrese otro";
             }
+            if ( studentDTO.getDni().isEmpty() || studentDTO.getDni() == null ) {
+                return "El campo DNI del estudiante esta vacío";
+            }
+            if ( studentDTO.getDni().length() != 8 ) {
+                return "El campo DNI debe ser de tamaño 8";
+            }
+        }
+
+        // Valida la edad y fecha de nacimiento del estudiante
+        if ( studentDTO.getBirthDate() == null ) {
+            return "El campo Fecha de nacimiento del estudiante esta vacío";
+        }
+        int years = between( studentDTO.getBirthDate(), now() ).getYears();
+        if ( years < 6 ) {
+            return "La edad minima requerida son 6 años";
+        }
+
+        // Valida la direccion del estudiante
+        if ( studentDTO.getAddress().isEmpty() || studentDTO.getAddress() == null ) {
+            return "El campo dirección del estudiante esta vacío";
         }
         return message;
     }

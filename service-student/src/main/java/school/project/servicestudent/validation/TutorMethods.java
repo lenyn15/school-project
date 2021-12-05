@@ -25,29 +25,62 @@ public record TutorMethods( TutorRepository tutorRepository ) {
         Tutor tutorDB = new Tutor();
         if ( Objects.equals( action, "update" ) ) {
             tutorDB = tutorRepository.findById( tutorDTO.getId() ).orElse( null );
+            if ( tutorDB == null ) {
+                return format( "El apoderado con id %d no existe", tutorDTO.getId() );
+            }
         }
-        assert tutorDB != null;
 
+        // Valida el nombre y apellido del apoderado
         if ( !Objects.equals( tutorDB.getName(), tutorDTO.getName() ) &&
                 !Objects.equals( tutorDB.getSurname(), tutorDTO.getSurname() ) ) {
             Optional<Tutor> complete_nameDB = tutorRepository.findByNameAndSurname( tutorDTO.getName(), tutorDTO.getSurname() );
             if ( complete_nameDB.isPresent() ) {
-                return format( "Tutor con nombre %s %s ya existe", tutorDTO.getName(), tutorDTO.getSurname() );
+                return format( "Apoderado con nombre %s %s ya existe", tutorDTO.getName(), tutorDTO.getSurname() );
+            }
+            if ( tutorDTO.getName().isEmpty() || tutorDTO.getName() == null ) {
+                return "El campo nombre del apoderado esta vacío";
+            }
+            if ( tutorDTO.getSurname().isEmpty() || tutorDTO.getSurname() == null ) {
+                return "El campo apellido del apoderado esta vacío";
             }
         }
 
+        // Valida el DNI del apoderado
         if ( !Objects.equals( tutorDB.getDni(), tutorDTO.getDni() ) ) {
             Boolean existDni = tutorRepository.existDni( tutorDTO.getDni() );
             if ( existDni ) {
                 return "El DNI ingresado ya existe, ingrese otro";
             }
+            if ( tutorDTO.getDni().isEmpty() || tutorDTO.getDni() == null ) {
+                return "El campo DNI del apoderado esta vacío";
+            }
+            if ( tutorDTO.getDni().length() != 8 ) {
+                return "El campo DNI debe ser de tamaño 8";
+            }
         }
 
+        // Valida el telefono del apoderado
+        if ( tutorDTO.getPhone().isEmpty() || tutorDTO.getPhone() == null ) {
+            return "El campo telefono del apoderado esta vacío";
+        }
+        if ( tutorDTO.getPhone().length() != 9 ) {
+            return "El campo telefono debe ser de tamaño 8";
+        }
+
+        // Valida el email del apoderado
         if ( !Objects.equals( tutorDB.getEmail(), tutorDTO.getEmail() ) ) {
             Boolean existEmail = tutorRepository.existEmail( tutorDTO.getEmail() );
             if ( existEmail ) {
                 return "El email ingresado ya existe, ingrese otro";
             }
+            if ( tutorDTO.getEmail().isEmpty() || tutorDTO.getEmail() == null ) {
+                return "El campo email del apoderado esta vacío";
+            }
+        }
+
+        // Valida el campo trabajo del apoderado
+        if ( tutorDTO.getOccupation().isEmpty() || tutorDTO.getOccupation() == null ) {
+            return "El campo trabajo del apoderado esta vacío";
         }
         return message;
     }
