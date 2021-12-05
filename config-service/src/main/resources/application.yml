@@ -1,0 +1,19 @@
+server:
+    port: 8090
+spring:
+    application:
+        name: config-service
+    profiles:
+        active: development
+    cloud:
+        config:
+            server:
+                git:
+                    uri: https://github.com/lenyn15/school-project.git
+                    search-paths:
+                        - config-server
+                default-label: master
+    security:
+        user:
+            name: root
+            password: s3cr3t
