@@ -79,6 +79,12 @@ public record StudentMethods(
         if ( studentDTO.getAddress().isEmpty() || studentDTO.getAddress() == null ) {
             return "El campo dirección del estudiante esta vacío";
         }
+
+        // Valida el apoderado del estudiante
+        Tutor tutor = tutorRepository.findById( studentDTO.getId_tutor() ).orElse( null );
+        if ( tutor == null ) {
+            return format( "El apoderado con id %d no existe", studentDTO.getId_tutor() );
+        }
         return message;
     }
 
