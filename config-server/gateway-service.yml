@@ -15,11 +15,11 @@ spring:
                 locator:
                     enabled: true
             routes:
-                - id: service-student
+                - id: student
                   uri: lb://service-student
                   predicates:
                       - Path:/student/**
-                - id: service-student
+                - id: tutor
                   uri: lb://service-student
                   predicates:
                       - Path:/student/**
