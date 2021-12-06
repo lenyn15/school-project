@@ -1,0 +1,21 @@
+server:
+    port: 8080
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8099/eureka/
+spring:
+    application:
+        name: gateway-service
+    profiles:
+        active: development
+    cloud:
+        gateway:
+            discovery:
+                locator:
+                    enabled: true
+            routes:
+                - id: service-student
+                  uri: lb://service-student
+                  predicates:
+                      - Path=/tutor/**,/student/**
