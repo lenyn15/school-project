@@ -36,7 +36,7 @@ public record StudentController( StudentService studentService ) {
 
     @GetMapping( path = "/status/{status}" )
     public ResponseEntity<Response> searchByStatus( @PathVariable( "status" ) Long status ) {
-        String message = "Estudiante filtrados correctamente por el estado ";
+        String message = "Estudiantes filtrados correctamente por el estado ";
         Map<String, List<StudentDTO>> students = new java.util.HashMap<>();
         students.put( "students", studentService.filterByStatus( status ) );
         return ok( builder().dateTime( now() )

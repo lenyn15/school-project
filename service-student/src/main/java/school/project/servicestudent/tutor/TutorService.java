@@ -45,11 +45,10 @@ public record TutorService(
             throw new ApiRequestException( format( "El apoderado con dni %s no esta registrado", dni ) );
         }
         Tutor tutorDB = tutorRepository.findByDni( dni );
-        if ( tutorDB.getStatus() ) {
-            return builder().id( tutorDB.getId() ).name( tutorDB.getName() ).surname( tutorDB.getSurname() ).build();
-        } else {
+        if ( !tutorDB.getStatus() ) {
             throw new ApiRequestException( format( "El apoderado %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
+        return builder().id( tutorDB.getId() ).name( tutorDB.getName() ).surname( tutorDB.getSurname() ).build();
     }
 
     public TutorDTO getOne( Long id ) {
@@ -57,45 +56,42 @@ public record TutorService(
         if ( tutorDB == null ) {
             throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
-        if ( tutorDB.getStatus() ) {
-            return builder().complete_name( format( "%s %s", tutorDB.getName(), tutorDB.getSurname() ) )
-                            .gender( tutorDB.getGender().toString() )
-                            .dni( tutorDB.getDni() )
-                            .phone( tutorDB.getPhone() )
-                            .email( tutorDB.getEmail() )
-                            .occupation( tutorDB.getOccupation() )
-                            .students( tutorDB.getStudents()
-                                              .stream()
-                                              .map( student -> StudentDTO.builder()
-                                                                         .complete_name( format( "%s %s", student.getName(), student.getSurname() ) )
-                                                                         .status( student.getStatus() ? HABILITADO :
-                                                                                  INHABILITADO )
-                                                                         .gender( student.getGender().toString() )
-                                                                         .dni( student.getDni() )
-                                                                         .build() )
-                                              .collect( toList() ) )
-                            .build();
-        } else {
+        if ( !tutorDB.getStatus() ) {
             throw new ApiRequestException( format( "El apoderado %s %s se encuentra inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
+        return builder().complete_name( format( "%s %s", tutorDB.getName(), tutorDB.getSurname() ) )
+                        .gender( tutorDB.getGender().toString() )
+                        .dni( tutorDB.getDni() )
+                        .phone( tutorDB.getPhone() )
+                        .email( tutorDB.getEmail() )
+                        .occupation( tutorDB.getOccupation() )
+                        .students( tutorDB.getStudents()
+                                          .stream()
+                                          .map( student -> StudentDTO.builder()
+                                                                     .complete_name( format( "%s %s", student.getName(), student.getSurname() ) )
+                                                                     .status( student.getStatus() ? HABILITADO :
+                                                                              INHABILITADO )
+                                                                     .gender( student.getGender().toString() )
+                                                                     .dni( student.getDni() )
+                                                                     .build() )
+                                          .collect( toList() ) )
+                        .build();
     }
 
     public Tutor add( TutorDTO tutorDTO ) {
         String message = methods.validate( tutorDTO, "" );
-        if ( Objects.equals( message, "" ) ) {
-            return methods.save( tutorDTO, "" );
-        } else {
+        if ( !Objects.equals( message, "" ) ) {
             throw new ApiRequestException( message );
         }
+        return methods.save( tutorDTO, "" );
     }
 
     public Tutor update( TutorDTO tutorDTO ) {
         String message = methods.validate( tutorDTO, "update" );
-        if ( Objects.equals( message, "" ) ) {
-            return methods.save( tutorDTO, "update" );
-        } else {
+        if ( !Objects.equals( message, "" ) ) {
             throw new ApiRequestException( message );
         }
+        return methods.save( tutorDTO, "update" );
     }
 
     public Tutor disable( Long id ) {
@@ -103,13 +99,12 @@ public record TutorService(
         if ( tutorDB == null ) {
             throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
-        if ( tutorDB.getStatus() ) {
-            tutorDB.setStatus( false );
-            tutorRepository.save( tutorDB );
-            return tutorDB;
-        } else {
+        if ( !tutorDB.getStatus() ) {
             throw new ApiRequestException( format( "Apoderado %s %s, ya está inhabilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
+        tutorDB.setStatus( false );
+        tutorRepository.save( tutorDB );
+        return tutorDB;
     }
 
     public Tutor enable( Long id ) {
@@ -117,12 +112,11 @@ public record TutorService(
         if ( tutorDB == null ) {
             throw new ApiRequestException( format( "El apoderado con id %d no existe", id ) );
         }
-        if ( !tutorDB.getStatus() ) {
-            tutorDB.setStatus( true );
-            tutorRepository.save( tutorDB );
-            return tutorDB;
-        } else {
+        if ( tutorDB.getStatus() ) {
             throw new ApiRequestException( format( "Apoderado %s %s, ya está habilitado", tutorDB.getName(), tutorDB.getSurname() ) );
         }
+        tutorDB.setStatus( true );
+        tutorRepository.save( tutorDB );
+        return tutorDB;
     }
 }

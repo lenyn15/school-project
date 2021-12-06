@@ -42,14 +42,10 @@ public record StudentService(
             throw new ApiRequestException( format( "El estudiante con dni %s no esta registrado", dni ) );
         }
         Student studentDB = studentRepository.findByDni( dni );
-        if ( studentDB.getStatus() ) {
-            return builder().id( studentDB.getId() )
-                            .name( studentDB.getName() )
-                            .surname( studentDB.getSurname() )
-                            .build();
-        } else {
+        if ( !studentDB.getStatus() ) {
             throw new ApiRequestException( format( "El Estudiante %s %s se encuentra inhabilitado", studentDB.getName(), studentDB.getSurname() ) );
         }
+        return builder().id( studentDB.getId() ).name( studentDB.getName() ).surname( studentDB.getSurname() ).build();
     }
 
     public StudentDTO getOne( Long id ) {
@@ -57,57 +53,52 @@ public record StudentService(
         if ( studentDB == null ) {
             throw new ApiRequestException( format( "El estudiante con id %d no existe", id ) );
         }
-        if ( studentDB.getStatus() ) {
-            return builder().complete_name( format( "%s %s", studentDB.getName(), studentDB.getSurname() ) )
-                            .gender( studentDB.getGender().toString() )
-                            .dni( studentDB.getDni() )
-                            .birth_date( studentDB.getBirth_date().format( ofPattern( "dd/MM/yyyy" ) ) )
-                            .address( studentDB.getAddress() )
-                            .build();
-        } else {
+        if ( !studentDB.getStatus() ) {
             throw new ApiRequestException( format( "El Estudiante %s %s se encuentra inhabilitado", studentDB.getName(), studentDB.getSurname() ) );
         }
+        return builder().complete_name( format( "%s %s", studentDB.getName(), studentDB.getSurname() ) )
+                        .gender( studentDB.getGender().toString() )
+                        .dni( studentDB.getDni() )
+                        .birth_date( studentDB.getBirth_date().format( ofPattern( "dd/MM/yyyy" ) ) )
+                        .address( studentDB.getAddress() )
+                        .build();
     }
 
     public Student add( StudentDTO studentDTO ) {
         String message = methods.validate( studentDTO, "" );
-        if ( Objects.equals( message, "" ) ) {
-            return methods.save( studentDTO, "" );
-        } else {
+        if ( !Objects.equals( message, "" ) ) {
             throw new ApiRequestException( message );
         }
+        return methods.save( studentDTO, "" );
     }
 
     public Student update( StudentDTO studentDTO ) {
         String message = methods.validate( studentDTO, "update" );
-        if ( Objects.equals( message, "" ) ) {
-            return methods.save( studentDTO, "update" );
-        } else {
+        if ( !Objects.equals( message, "" ) ) {
             throw new ApiRequestException( message );
         }
+        return methods.save( studentDTO, "update" );
     }
 
     public Student disable( Long id ) {
         Student studentDB = studentRepository.findById( id ).orElse( null );
         assert studentDB != null;
-        if ( studentDB.getStatus() ) {
-            studentDB.setStatus( false );
-            studentRepository.save( studentDB );
-            return studentDB;
-        } else {
+        if ( !studentDB.getStatus() ) {
             throw new ApiRequestException( format( "Estudiante %s %s, ya está inhabilitado", studentDB.getName(), studentDB.getSurname() ) );
         }
+        studentDB.setStatus( false );
+        studentRepository.save( studentDB );
+        return studentDB;
     }
 
     public Student enable( Long id ) {
         Student studentDB = studentRepository.findById( id ).orElse( null );
         assert studentDB != null;
-        if ( !studentDB.getStatus() ) {
-            studentDB.setStatus( true );
-            studentRepository.save( studentDB );
-            return studentDB;
-        } else {
+        if ( studentDB.getStatus() ) {
             throw new ApiRequestException( format( "Estudiante %s %s, ya está habilitado", studentDB.getName(), studentDB.getSurname() ) );
         }
+        studentDB.setStatus( true );
+        studentRepository.save( studentDB );
+        return studentDB;
     }
 }
